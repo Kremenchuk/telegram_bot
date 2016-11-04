@@ -2,6 +2,9 @@ source 'https://rubygems.org'
 gem 'haml'
 gem 'telegram-bot-ruby'
 gem 'rest-client'
+gem 'httplog'
+gem 'telegram-bot'
+gem 'faraday'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
