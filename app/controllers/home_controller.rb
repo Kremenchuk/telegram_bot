@@ -1,6 +1,6 @@
 require 'telegram/bot'
 TELEGRAM_BOT_TOKEN = '221621473:AAECLZh4VDZ19LVBLskZiaf4rw4Emnj-6vE'
-API = 'https://api.telegram.org/bot'
+API_URL = 'https://api.telegram.org'
 
 class HomeController < ApplicationController
   def index
@@ -16,25 +16,21 @@ class HomeController < ApplicationController
     endpoint = '/setWebhook'
     response = conn.post("/bot#{TELEGRAM_BOT_TOKEN}/#{endpoint}", params)
     if response.status == 200
-      JSON.parse(response.body)
+      @data = JSON.parse(response.body)
     else
-      raise Exceptions::ResponseError.new(response),
-            'Telegram API has returned the error.'
+      @error = JSON.parse(response.body)
     end
   end
 
 
   def get_to_api
-    method = '/getUpdates'
-    attr = {
-        timeout: 10
-    }
-    begin
-      @data = JSON.parse(RestClient.post(API + TELEGRAM_BOT_TOKEN + method, attr.to_json, headers: {:content_type=>"application/json"}))
-    rescue => @error
-    end
-    respond_to do |format|
-      format.js {}
+    params = {}
+    endpoint = '/getUpdates'
+    response = conn.post("/bot#{TELEGRAM_BOT_TOKEN}/#{endpoint}", params)
+    if response.status == 200
+      @data = JSON.parse(response.body)
+    else
+      @error = JSON.parse(response.body)
     end
   end
 
@@ -69,7 +65,7 @@ class HomeController < ApplicationController
   end
 
   def conn
-    @conn ||= Faraday.new(url: 'https://api.telegram.org') do |faraday|
+    @conn ||= Faraday.new(url: API_URL) do |faraday|
       faraday.request :multipart
       faraday.request :url_encoded
       faraday.adapter Faraday.default_adapter
